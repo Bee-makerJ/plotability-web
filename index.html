@@ -260,11 +260,10 @@
       box-shadow: var(--shadow-soft);
       display: grid;
       place-content: center;
-      padding: 32px;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.95rem;
+      padding: 0;
+      overflow: hidden;
     }
+    .hero-placeholder img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: inherit; }
 
     main {
       flex: 1;
@@ -526,7 +525,9 @@
           <div class="trust-bar">Privacy by design. Works offline. Nothing leaves your browser unless you ask it to.</div>
         </div>
         <div class="hero-visual">
-          <div class="hero-placeholder">Reserve this space for a cinematic preview or mockup of Plotability's workspace.</div>
+          <div class="hero-placeholder">
+            <img src="assets/screenshots/Screenshot%202025-10-26%20at%2010.40.30%E2%80%AFam.png" alt="Cinematic preview screenshot of Plotability">
+          </div>
         </div>
       </div>
     </section>
@@ -651,8 +652,9 @@
   </div>
   <script>
   (function () {
-    const STAR_COUNT = 820;
+    const STAR_COUNT = 144;
     const SPEED = 0.1;
+    const LETTERS = 'abcdefghijklmnopqrstuvwxyz';
     const container = document.querySelector('#starfield');
     const canvas = document.getElementById('starfield-canvas');
     if (!container || !canvas) {
@@ -671,6 +673,11 @@
         this.z = 0;
         this.prevX = 0;
         this.prevY = 0;
+        this.char = LETTERS[0];
+        this.size = 12;
+        this.opacity = 0.6;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.03;
       }
 
       reset(width, height) {
@@ -679,6 +686,11 @@
         this.prevX = this.x;
         this.prevY = this.y;
         this.z = 0;
+        this.char = LETTERS[Math.floor(Math.random() * LETTERS.length)];
+        this.size = 6 + Math.random() * 6;
+        this.opacity = 0.034 + Math.random() * 0.217;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.05;
       }
 
       update(width, height, speed) {
@@ -687,6 +699,7 @@
         this.z += speed * 0.0675;
         this.x += this.x * (speed * 0.0225) * this.z;
         this.y += this.y * (speed * 0.0225) * this.z;
+        this.rotation += this.rotationSpeed * (1 + this.z * 0.9);
 
         if (
           this.x > width / 2 ||
@@ -700,17 +713,22 @@
       }
 
       draw(ctx) {
-        ctx.lineWidth = Math.max(this.z, 0.6);
-        ctx.beginPath();
-        ctx.moveTo(this.prevX, this.prevY);
-        ctx.lineTo(this.x, this.y);
-        ctx.stroke();
+        const scale = 1 + this.z * 0.5;
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.globalAlpha = Math.min(this.opacity + this.z * 0.11, 0.32);
+        ctx.fillStyle = '#c7c2f6';
+        ctx.font = `${(this.size * scale).toFixed(2)}px 'Inter', 'Montserrat', sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.char, 0, 0);
+        ctx.restore();
       }
     }
 
     const stars = Array.from({ length: STAR_COUNT }, () => new Star());
-    const fadeFill = 'rgba(0, 0, 18, 0.42)';
-    const strokeColor = 'rgba(255, 255, 255, 0.92)';
+    const fadeFill = 'rgba(0, 0, 18, 0.46)';
     let animationId = 0;
 
     const step = () => {
@@ -749,9 +767,6 @@
       context.setTransform(1, 0, 0, 1, 0, 0);
       context.scale(ratio, ratio);
       context.translate(width / 2, height / 2);
-      context.strokeStyle = strokeColor;
-      context.lineCap = 'round';
-      context.lineJoin = 'round';
 
       stars.forEach((star) => star.reset(width, height));
       animationId = requestAnimationFrame(step);
