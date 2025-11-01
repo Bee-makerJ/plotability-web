@@ -82,34 +82,12 @@
       z-index: 1;
     }
 
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: transparent !important;
-      backdrop-filter: none !important;
-      transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    header.header-stuck {
-      background: rgba(14, 8, 42, 0.82);
-      backdrop-filter: blur(18px);
-      box-shadow: 0 18px 44px rgba(6, 2, 22, 0.45);
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 22px clamp(20px, 6vw, 40px);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      padding: 6px 0;
+    .logo-container {
+      position: fixed;
+      top: clamp(20px, 5vw, 30px);
+      left: clamp(20px, 6vw, 40px);
+      z-index: 100;
+      background: transparent;
     }
 
     .brand-icon {
@@ -503,13 +481,9 @@
     <canvas id="starfield-canvas"></canvas>
   </div>
   <div class="page-shell">
-    <header>
-      <nav class="nav">
-        <div class="brand">
-          <img class="brand-icon" src="assets/screenshots/plotabilityLogo.png" alt="Plotability logo">
-        </div>
-      </nav>
-    </header>
+    <div class="logo-container">
+      <img class="brand-icon" src="assets/screenshots/plotabilityLogo.png" alt="Plotability logo">
+    </div>
 
     <section class="hero">
       <div class="hero-grid">
@@ -782,16 +756,6 @@
       observer.observe(container);
     } else {
       window.addEventListener('resize', () => resize());
-    }
-
-    const header = document.querySelector('header');
-    if (header) {
-      const toggleHeaderState = () => {
-        const shouldStick = window.scrollY > 24;
-        header.classList.toggle('header-stuck', shouldStick);
-      };
-      toggleHeaderState();
-      window.addEventListener('scroll', toggleHeaderState, { passive: true });
     }
 
     resize();
