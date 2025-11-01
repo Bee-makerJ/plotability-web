@@ -88,6 +88,13 @@
       z-index: 10;
       background: transparent;
       backdrop-filter: none;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    header.header-stuck {
+      background: rgba(14, 8, 42, 0.82);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 18px 44px rgba(6, 2, 22, 0.45);
     }
 
     .nav {
@@ -102,23 +109,14 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 14px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      text-transform: uppercase;
-      font-size: 0.95rem;
+      padding: 6px 0;
     }
 
     .brand-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(183, 116, 242, 0.9), rgba(255, 92, 158, 0.8));
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      font-family: 'Montserrat', sans-serif;
-      box-shadow: 0 14px 32px rgba(255, 92, 158, 0.25);
+      width: clamp(72px, 9vw, 112px);
+      height: auto;
+      display: block;
+      object-fit: contain;
     }
 
     .nav-links {
@@ -239,8 +237,9 @@
       display: flex;
       align-items: center;
       gap: 22px;
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.65);
+      white-space: nowrap;
     }
 
     .trust-bar::before {
@@ -436,6 +435,7 @@
         position: static;
         background: transparent;
         backdrop-filter: none;
+        box-shadow: none;
       }
 
       .nav {
@@ -506,8 +506,7 @@
     <header>
       <nav class="nav">
         <div class="brand">
-          <span class="brand-icon">P</span>
-          <span>Plotability</span>
+          <img class="brand-icon" src="assets/screenshots/plotabilityLogo.png" alt="Plotability logo">
         </div>
         <div class="nav-links">
           <a href="#features">Features</a>
@@ -544,7 +543,7 @@
           <div class="section-heading">
             <span class="pill">Built for the modern storyteller</span>
             <h2>The tools you need to visualize, organize, and evolve your narrative universe.</h2>
-            <p>Plotability combines a minimalist interface with powerful structure so you can track characters, locations, lore, and plot threads without friction.</p>
+            <p>Plotability combines a minimalist interface with powerful structure so you can track the characters, research, places and plot threads of your narrative world with ease.</p>
           </div>
           <div class="feature-grid">
             <article class="feature-card">
@@ -790,6 +789,16 @@
       observer.observe(container);
     } else {
       window.addEventListener('resize', () => resize());
+    }
+
+    const header = document.querySelector('header');
+    if (header) {
+      const toggleHeaderState = () => {
+        const shouldStick = window.scrollY > 24;
+        header.classList.toggle('header-stuck', shouldStick);
+      };
+      toggleHeaderState();
+      window.addEventListener('scroll', toggleHeaderState, { passive: true });
     }
 
     resize();
