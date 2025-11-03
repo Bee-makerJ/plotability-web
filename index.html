@@ -170,7 +170,7 @@
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: 1fr; /* simplify to single column */
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: clamp(50px, 7vw, 120px);
       align-items: center;
       max-width: 1180px;
@@ -289,7 +289,26 @@
       border-radius: 999px;
     }
 
-    .hero-visual { display: none; }
+    .hero-visual {
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+    .hero-video-frame {
+      width: min(520px, 100%);
+      aspect-ratio: 16 / 10;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      background: linear-gradient(155deg, rgba(18, 16, 36, 0.9), rgba(12, 11, 20, 0.7));
+    }
+    .hero-video-frame video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
 
     .hero-placeholder {
       width: min(440px, 100%);
@@ -565,8 +584,8 @@
           
         </div>
         <div class="hero-visual">
-          <div class="hero-placeholder">
-            <img src="assets/screenshots/Screenshot%202025-10-26%20at%2010.40.30%E2%80%AFam.png" alt="Cinematic preview screenshot of Plotability">
+          <div class="hero-video-frame">
+            <video id="hero-video" src="assets/screenshots/Abstract_Letterform_Morphing_Silhouettes.mp4" muted playsinline preload="metadata"></video>
           </div>
         </div>
       </div>
@@ -831,4 +850,55 @@
   })();
   </script>
 </body>
+<script>
+  (function () {
+    const video = document.getElementById('hero-video');
+    if (!video) return;
+
+    let reversing = false;
+    let rafId = 0;
+    const reverseSpeed = 1.0; // seconds per second when reversing
+
+    const stopReverse = () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+    };
+
+    const reverseStep = (prevTs) => (ts) => {
+      if (!reversing) return;
+      const dt = (ts - prevTs) / 1000; // ms → s
+      video.currentTime = Math.max(0, video.currentTime - dt * reverseSpeed);
+      if (video.currentTime <= 0.001) {
+        reversing = false;
+        stopReverse();
+        // play forward again
+        video.play().catch(() => {});
+        return;
+      }
+      rafId = requestAnimationFrame(reverseStep(ts));
+    };
+
+    const startReverse = () => {
+      reversing = true;
+      stopReverse();
+      rafId = requestAnimationFrame(reverseStep(performance.now()));
+    };
+
+    video.addEventListener('loadedmetadata', () => {
+      // Autoplay forward on load
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    });
+
+    video.addEventListener('ended', () => {
+      // When forward playback ends, reverse
+      startReverse();
+    });
+
+    // In case user switches tabs and timers pause, ensure no audio
+    video.muted = true;
+  })();
+  </script>
 </html>
