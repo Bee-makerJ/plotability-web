@@ -188,17 +188,53 @@
     }
     .hero-title-line {
       display: block;
-      /* Rich multi-stop gradient: purple → pink → tangerine */
+      /* Rich multi-stop gradient (heavier on tangerine) */
       background-image: linear-gradient(120deg,
-        #B774F2 0%,   /* purple */
-        #C66CF7 18%,  /* brighter purple */
-        #FF5C9E 45%,  /* pink */
-        #FF7A6E 70%,  /* peach */
-        #FFA149 100%  /* tangerine */
+        #9F61F6 0%,    /* purple */
+        #C56DF7 16%,   /* brighter purple */
+        #FF5CAB 36%,   /* pink */
+        #FF3D81 48%,   /* hot pink */
+        #FF7A4F 64%,   /* orange-peach */
+        #FF8A3D 80%,   /* orange */
+        #FFA73A 100%   /* tangerine */
       );
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+    }
+
+    /* Vary each line slightly for more visual separation */
+    .hero-title-line:nth-child(1) {
+      background-image: linear-gradient(120deg,
+        #A568F8 0%,
+        #C56DF7 22%,
+        #FF5CAB 46%,
+        #FF6A6A 66%,
+        #FF8A3D 86%,
+        #FFB23A 100%
+      );
+    }
+
+    .hero-title-line:nth-child(2) {
+      background-image: linear-gradient(120deg,
+        #B774F2 0%,
+        #D06CF5 18%,
+        #FF5CAB 40%,
+        #FF4F7A 58%,
+        #FF8A3D 78%,
+        #FFB54A 100%
+      );
+    }
+
+    .hero-title-line:nth-child(3) {
+      background-image: linear-gradient(120deg,
+        #C06BF8 0%,
+        #FF5CAB 28%,
+        #FF6E6E 46%,
+        #FF8A3D 72%,
+        #FFA63A 88%,
+        #FFC14A 100%
+      );
     }
 
     .hero-subtitle {
