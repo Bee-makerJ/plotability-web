@@ -204,35 +204,39 @@
     }
 
     /* Vary each line slightly for more visual separation */
-    .hero-title-line:nth-child(1) { /* Build your: purple → pink */
-      background-image: linear-gradient(120deg,
-        #A568F8 0%,
-        #B774F2 14%,
-        #C56DF7 28%,
-        #E05FEF 44%,
-        #FF5CAB 100%
+    .hero-title-line:nth-child(1) { /* Build your: varied violets → pink */
+      background-image: linear-gradient(112deg,
+        #7A4CF8 0%,    /* deep violet */
+        #9459F7 12%,
+        #B070FA 26%,
+        #CFA6FF 42%,   /* soft lavender */
+        #EA61EE 62%,
+        #FF5CC6 92%
       );
     }
 
-    .hero-title-line:nth-child(2) { /* stories: mostly pink */
-      background-image: linear-gradient(120deg,
-        #D66BF6 0%,
-        #EA61EE 16%,
-        #FF5CAB 40%,
-        #FF4F9A 64%,
-        #FF6E7A 100%
+    .hero-title-line:nth-child(2) { /* stories: rich pink range with subtle purple base */
+      background-image: linear-gradient(124deg,
+        #9F61F6 0%,
+        #C26BF7 10%,
+        #E45BF0 28%,
+        #FF4FD4 46%,
+        #FF5CAB 64%,
+        #FF6E93 82%,
+        #FF7A7A 100%
       );
     }
 
-    .hero-title-line:nth-child(3) { /* faster: pink → strong tangerine */
-      background-image: linear-gradient(120deg,
-        #FF5CAB 0%,
-        #FF6E86 20%,
-        #FF7A5E 40%,
-        #FF8C3B 65%,
-        #FFA12F 82%,
-        #FFB11A 92%,
-        #FFC20A 100%
+    .hero-title-line:nth-child(3) { /* faster: pink → bright tangerine ramp */
+      background-image: linear-gradient(132deg,
+        #FF4FC0 0%,
+        #FF5CAB 18%,
+        #FF6E86 36%,
+        #FF7F63 52%,
+        #FF9541 68%,
+        #FFA72A 82%,
+        #FFC014 92%,
+        #FFD20A 100%
       );
     }
 
