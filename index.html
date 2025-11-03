@@ -857,133 +857,158 @@
 </body>
 <script>
   (function () {
-    const video = document.getElementById('hero-video');
-    const canvas = document.getElementById('hero-video-canvas');
-    if (!video || !canvas) return;
-
-    // Forward <-> reverse control
-    let reversing = false;
-    let reverseRaf = 0;
-    const reverseSpeed = 1.0; // seconds per second when reversing
-
-    function stopReverse() {
-      if (reverseRaf) {
-        cancelAnimationFrame(reverseRaf);
-        reverseRaf = 0;
-      }
-    }
-
-    const reverseStep = (prevTs) => (ts) => {
-      if (!reversing) return;
-      const dt = (ts - prevTs) / 1000;
-      video.currentTime = Math.max(0, video.currentTime - dt * reverseSpeed);
-      if (video.currentTime <= 0.001) {
-        reversing = false;
-        stopReverse();
-        video.play().catch(() => {});
+    function initVideo() {
+      const video = document.getElementById('hero-video');
+      const canvas = document.getElementById('hero-video-canvas');
+      if (!video || !canvas) {
+        // Retry if elements not ready yet
+        setTimeout(initVideo, 100);
         return;
       }
-      reverseRaf = requestAnimationFrame(reverseStep(ts));
-    };
 
-    function startReverse() {
-      reversing = true;
-      stopReverse();
-      reverseRaf = requestAnimationFrame(reverseStep(performance.now()));
-    }
+      // Forward <-> reverse control
+      let reversing = false;
+      let reverseRaf = 0;
+      const reverseSpeed = 1.0; // seconds per second when reversing
 
-    // Canvas setup for keying out black background
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    let rendering = false;
-    
-    function sizeCanvas() {
-      const rect = canvas.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) return;
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
-      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
-    }
-    sizeCanvas();
-    window.addEventListener('resize', sizeCanvas);
-
-    // Key out near-black: soft threshold for smoother edges
-    const low = 22;   // fully transparent below this luminance
-    const high = 68;  // start of fully opaque range
-
-    function renderFrame() {
-      if (!rendering) return;
-      try {
-        // Ensure canvas is sized
-        if (canvas.width === 0 || canvas.height === 0) {
-          sizeCanvas();
-          if (canvas.width === 0 || canvas.height === 0) {
-            requestAnimationFrame(renderFrame);
-            return;
-          }
+      function stopReverse() {
+        if (reverseRaf) {
+          cancelAnimationFrame(reverseRaf);
+          reverseRaf = 0;
         }
-        
-        // Draw the video to canvas
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = frame.data;
-        
-        // Key out black pixels
-        for (let i = 0; i < data.length; i += 4) {
-          const r = data[i];
-          const g = data[i + 1];
-          const b = data[i + 2];
-          // Luminance approximation using max channel
-          const l = Math.max(r, g, b);
-          if (l <= low) {
-            data[i + 3] = 0; // fully transparent
-          } else if (l < high) {
-            // Soft edge: map to partial alpha
-            const t = (l - low) / (high - low);
-            data[i + 3] = data[i + 3] * t;
-          }
-        }
-        ctx.putImageData(frame, 0, 0);
-        requestAnimationFrame(renderFrame);
-      } catch (e) {
-        console.error('Canvas render error:', e);
-        requestAnimationFrame(renderFrame);
       }
-    }
 
-    // Start video and canvas rendering
-    const startVideo = () => {
-      if (video.readyState >= 2) { // HAVE_CURRENT_DATA
-        video.currentTime = 0;
-        sizeCanvas();
-        rendering = true;
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-          playPromise.then(() => {
-            requestAnimationFrame(renderFrame);
-          }).catch(() => {
-            // Autoplay blocked, but canvas can still render
-            rendering = true;
-            requestAnimationFrame(renderFrame);
-          });
-        } else {
+      const reverseStep = (prevTs) => (ts) => {
+        if (!reversing) return;
+        const dt = (ts - prevTs) / 1000;
+        video.currentTime = Math.max(0, video.currentTime - dt * reverseSpeed);
+        if (video.currentTime <= 0.001) {
+          reversing = false;
+          stopReverse();
+          video.play().catch(() => {});
+          return;
+        }
+        reverseRaf = requestAnimationFrame(reverseStep(ts));
+      };
+
+      function startReverse() {
+        reversing = true;
+        stopReverse();
+        reverseRaf = requestAnimationFrame(reverseStep(performance.now()));
+      }
+
+      // Canvas setup for keying out black background
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      let rendering = false;
+      
+      function sizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) return;
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+        canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      }
+      sizeCanvas();
+      window.addEventListener('resize', sizeCanvas);
+
+      // Key out near-black: soft threshold for smoother edges
+      const low = 22;   // fully transparent below this luminance
+      const high = 68;  // start of fully opaque range
+
+      function renderFrame() {
+        if (!rendering) return;
+        try {
+          // Ensure canvas is sized
+          if (canvas.width === 0 || canvas.height === 0) {
+            sizeCanvas();
+            if (canvas.width === 0 || canvas.height === 0) {
+              requestAnimationFrame(renderFrame);
+              return;
+            }
+          }
+          
+          // Draw the video to canvas
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = frame.data;
+          
+          // Key out black pixels
+          for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            // Luminance approximation using max channel
+            const l = Math.max(r, g, b);
+            if (l <= low) {
+              data[i + 3] = 0; // fully transparent
+            } else if (l < high) {
+              // Soft edge: map to partial alpha
+              const t = (l - low) / (high - low);
+              data[i + 3] = data[i + 3] * t;
+            }
+          }
+          ctx.putImageData(frame, 0, 0);
+          requestAnimationFrame(renderFrame);
+        } catch (e) {
+          console.error('Canvas render error:', e);
           requestAnimationFrame(renderFrame);
         }
       }
-    };
 
-    // Multiple event listeners for better compatibility
-    video.addEventListener('loadedmetadata', startVideo);
-    video.addEventListener('canplay', startVideo);
-    video.addEventListener('loadeddata', startVideo);
-    
-    // Fallback: if video already has metadata, start immediately
-    if (video.readyState >= 1) {
-      setTimeout(startVideo, 100);
+      // Start video and canvas rendering
+      const startVideo = () => {
+        if (video.readyState >= 1) { // HAVE_METADATA or better
+          video.currentTime = 0;
+          sizeCanvas();
+          rendering = true;
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              requestAnimationFrame(renderFrame);
+            }).catch((e) => {
+              // Autoplay blocked, but canvas can still render
+              console.log('Autoplay blocked, rendering anyway');
+              rendering = true;
+              requestAnimationFrame(renderFrame);
+            });
+          } else {
+            requestAnimationFrame(renderFrame);
+          }
+        }
+      };
+
+      // Ensure video is muted
+      video.muted = true;
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
+
+      // Multiple event listeners for better compatibility
+      video.addEventListener('loadedmetadata', startVideo);
+      video.addEventListener('canplay', startVideo);
+      video.addEventListener('loadeddata', startVideo);
+      video.addEventListener('canplaythrough', startVideo);
+      
+      // Also try when video element is loaded
+      if (video.readyState >= 1) {
+        setTimeout(startVideo, 100);
+      }
+
+      // If still not started after a delay, force start
+      setTimeout(() => {
+        if (!rendering && video.readyState >= 1) {
+          startVideo();
+        }
+      }, 500);
+
+      video.addEventListener('ended', () => startReverse());
     }
 
-    video.addEventListener('ended', () => startReverse());
-
-    video.muted = true;
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initVideo);
+    } else {
+      initVideo();
+    }
   })();
   </script>
 </html>
