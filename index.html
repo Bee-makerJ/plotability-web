@@ -301,21 +301,16 @@
       border: 1px solid rgba(255, 255, 255, 0.06);
       overflow: hidden;
       box-shadow: var(--shadow-soft);
-      background: linear-gradient(155deg, rgba(18, 16, 36, 0.9), rgba(12, 11, 20, 0.7));
+      background: transparent; /* let site background show through */
     }
-    .hero-video-frame::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      /* Subtle dark overlay to soften baked checkerboard backgrounds */
-      background: linear-gradient(135deg, rgba(8, 4, 26, 0.35), rgba(8, 4, 26, 0.55));
-    }
+    .hero-video-frame::after { content: none; }
     .hero-video-frame video {
       width: 100%;
       height: 100%;
       display: block;
       object-fit: cover;
+      mix-blend-mode: screen; /* lighten video over dark bg; softens black mattes */
+      background: transparent;
     }
 
     .hero-placeholder {
@@ -593,7 +588,7 @@
         </div>
         <div class="hero-visual">
           <div class="hero-video-frame">
-            <video id="hero-video" src="assets/screenshots/Seamless_Looping_Letterform_Animations.mp4" muted playsinline preload="metadata"></video>
+            <video id="hero-video" src="assets/screenshots/Nov_03__2223_14s_202511032233_o1m8y.mp4" muted playsinline preload="metadata"></video>
           </div>
         </div>
       </div>
