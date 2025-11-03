@@ -309,7 +309,9 @@
       height: 100%;
       display: block;
       object-fit: cover;
-      mix-blend-mode: screen; /* lighten video over dark bg; softens black mattes */
+      /* Stronger browser-side keying of dark background */
+      mix-blend-mode: plus-lighter; /* stronger than screen on supported browsers */
+      filter: brightness(1.25) contrast(1.35) saturate(1.1);
       background: transparent;
     }
 
