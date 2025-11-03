@@ -204,12 +204,13 @@
     }
 
     .hero-orange {
-      /* Smooth pink→orange blend to avoid a hard seam */
+      /* Smooth pink → deeper orange → tangerine; orange slightly darker than preceding pink */
       background-image: linear-gradient(120deg,
-        #FF5CAB 0%,   /* pink (matches preceding letters) */
-        #FF6E86 30%,
-        #FF8A3D 60%,  /* orange */
-        #FFA149 85%,
+        #FF5CAB 0%,   /* pink anchor */
+        #FF6E86 24%,
+        #FF7A3A 52%,  /* deeper orange for contrast */
+        #FF8A24 72%,  /* darker orange core */
+        #FFA336 88%,
         #FFC14A 100%  /* tangerine highlight */
       );
       -webkit-background-clip: text;
