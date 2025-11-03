@@ -309,11 +309,10 @@
       height: 100%;
       display: block;
       object-fit: cover;
-      /* Stronger browser-side keying of dark background */
-      mix-blend-mode: plus-lighter; /* stronger than screen on supported browsers */
-      filter: brightness(1.25) contrast(1.35) saturate(1.1);
       background: transparent;
+      display: none; /* hidden; used as source for canvas keying */
     }
+    .hero-video-frame canvas { width: 100%; height: 100%; display: block; }
 
     .hero-placeholder {
       width: min(440px, 100%);
@@ -591,6 +590,7 @@
         <div class="hero-visual">
           <div class="hero-video-frame">
             <video id="hero-video" src="assets/screenshots/Nov_03__2223_14s_202511032233_o1m8y.mp4" muted playsinline preload="metadata"></video>
+            <canvas id="hero-video-canvas"></canvas>
           </div>
         </div>
       </div>
@@ -858,51 +858,87 @@
 <script>
   (function () {
     const video = document.getElementById('hero-video');
-    if (!video) return;
+    const canvas = document.getElementById('hero-video-canvas');
+    if (!video || !canvas) return;
 
+    // Forward <-> reverse control
     let reversing = false;
-    let rafId = 0;
+    let reverseRaf = 0;
     const reverseSpeed = 1.0; // seconds per second when reversing
 
-    const stopReverse = () => {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-        rafId = 0;
+    function stopReverse() {
+      if (reverseRaf) {
+        cancelAnimationFrame(reverseRaf);
+        reverseRaf = 0;
       }
-    };
+    }
 
     const reverseStep = (prevTs) => (ts) => {
       if (!reversing) return;
-      const dt = (ts - prevTs) / 1000; // ms → s
+      const dt = (ts - prevTs) / 1000;
       video.currentTime = Math.max(0, video.currentTime - dt * reverseSpeed);
       if (video.currentTime <= 0.001) {
         reversing = false;
         stopReverse();
-        // play forward again
         video.play().catch(() => {});
         return;
       }
-      rafId = requestAnimationFrame(reverseStep(ts));
+      reverseRaf = requestAnimationFrame(reverseStep(ts));
     };
 
-    const startReverse = () => {
+    function startReverse() {
       reversing = true;
       stopReverse();
-      rafId = requestAnimationFrame(reverseStep(performance.now()));
-    };
+      reverseRaf = requestAnimationFrame(reverseStep(performance.now()));
+    }
+
+    // Canvas setup
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    function sizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+    }
+    sizeCanvas();
+    window.addEventListener('resize', sizeCanvas);
+
+    // Key out near-black: soft threshold for smoother edges
+    const low = 18;   // fully transparent below this luminance
+    const high = 58;  // start of fully opaque range
+
+    function renderFrame() {
+      const dpr = window.devicePixelRatio || 1;
+      // draw the video scaled to canvas
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = frame.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        // luminance approximation using max channel (more aggressive on black)
+        const l = Math.max(r, g, b);
+        if (l <= low) {
+          data[i + 3] = 0; // fully transparent
+        } else if (l < high) {
+          // Soft edge: map to partial alpha
+          const t = (l - low) / (high - low);
+          data[i + 3] = data[i + 3] * t;
+        }
+      }
+      ctx.putImageData(frame, 0, 0);
+      requestAnimationFrame(renderFrame);
+    }
 
     video.addEventListener('loadedmetadata', () => {
-      // Autoplay forward on load
       video.currentTime = 0;
       video.play().catch(() => {});
+      requestAnimationFrame(renderFrame);
     });
 
-    video.addEventListener('ended', () => {
-      // When forward playback ends, reverse
-      startReverse();
-    });
+    video.addEventListener('ended', () => startReverse());
 
-    // In case user switches tabs and timers pause, ensure no audio
     video.muted = true;
   })();
   </script>
