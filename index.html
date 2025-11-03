@@ -85,7 +85,7 @@
     .logo-container {
       position: fixed;
       top: clamp(20px, 5vw, 30px);
-      left: clamp(60px, 10vw, 80px);
+      left: clamp(100px, 12vw, 140px);
       z-index: 100;
       background: transparent;
     }
@@ -170,7 +170,7 @@
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr; /* simplify to single column */
       gap: clamp(50px, 7vw, 120px);
       align-items: center;
       max-width: 1180px;
@@ -228,11 +228,7 @@
       border-radius: 999px;
     }
 
-    .hero-visual {
-      position: relative;
-      display: flex;
-      justify-content: center;
-    }
+    .hero-visual { display: none; }
 
     .hero-placeholder {
       width: min(440px, 100%);
