@@ -751,7 +751,11 @@
             <h2>Be first in line when Plotability launches.</h2>
             <p>We’re rolling out invites in waves to ensure a polished experience for every storyteller. Reserve your spot and we’ll notify you as soon as we open the doors.</p>
           </div>
-          <form class="waitlist" action="#" method="post">
+          <form class="waitlist" name="waitlist" method="post" data-netlify="true" netlify-honeypot="bot-field" action="#">
+            <input type="hidden" name="form-name" value="waitlist">
+            <p style="display:none;">
+              <label>Don’t fill this out if you’re human: <input name="bot-field"></label>
+            </p>
             <input type="email" name="email" placeholder="yourname@email.com" required aria-label="Email address">
             <button class="btn btn-primary" type="submit">Save my place</button>
             <p style="font-size:0.85rem;">We’ll email you when Plotability is ready. No spam, ever.</p>
