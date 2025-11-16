@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Plotability — Build your stories, faster.</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -343,6 +345,32 @@
       gap: clamp(40px, 8vw, 80px);
     }
 
+    /* Two-column intro for features: text + video */
+    .feature-intro {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(40px, 6vw, 80px);
+      align-items: center;
+    }
+    .feature-video-frame {
+      width: min(520px, 100%);
+      aspect-ratio: 4 / 3;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: transparent;
+      border: none;
+      box-shadow: var(--shadow-soft);
+      justify-self: center;
+    }
+    .feature-video-frame video {
+      display: none; /* source only; canvas renders */
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: transparent;
+    }
+    .feature-video-frame canvas { width: 100%; height: 100%; display: block; }
+
     .section-heading {
       display: flex;
       flex-direction: column;
@@ -389,6 +417,20 @@
     .feature-card h3 {
       font-size: 1.25rem;
       margin-bottom: 14px;
+      /* Match hero title gradient colors */
+      background-image: linear-gradient(120deg,
+        #9F61F6 0%,    /* purple */
+        #C56DF7 16%,   /* brighter purple */
+        #FF5CAB 36%,   /* pink */
+        #FF3D81 48%,   /* hot pink */
+        #FF7A4F 64%,   /* orange-peach */
+        #FF8A3D 80%,   /* orange */
+        #FFA73A 100%   /* tangerine */
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
     }
 
     .pill {
@@ -544,6 +586,7 @@
       .hero-visual {
         justify-content: center;
       }
+      .feature-intro { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 640px) {
@@ -599,10 +642,16 @@
     <main>
       <section class="section" id="features">
         <div class="section-inner">
-          <div class="section-heading">
+          <div class="feature-intro">
+            <div class="section-heading">
             <span class="pill">Built for the modern storyteller</span>
             <h2>The tools you need to visualize, organize, and evolve your narrative universe.</h2>
             <p>Plotability combines a minimalist interface with powerful structure so you can track the characters, research, places and plot threads of your narrative world with ease.</p>
+            </div>
+            <div class="feature-video-frame">
+              <video id="feature-video" src="assets/screenshots/webvid3.mp4" muted playsinline autoplay preload="metadata" loop></video>
+              <canvas id="feature-video-canvas"></canvas>
+            </div>
           </div>
           <div class="feature-grid">
             <article class="feature-card">
@@ -660,7 +709,7 @@
         <div class="section-inner">
           <div class="section-heading">
             <span class="pill">AI that stays in sync with your world</span>
-            <h2>Three powerful modes, one creative copilot.</h2>
+            <h2>Four powerful modes, one creative copilot.</h2>
             <p>Whether you’re researching, refining, or exploring possibilities, Plotability’s assistant adapts to the way you work.</p>
           </div>
           <div class="feature-grid">
@@ -675,6 +724,10 @@
             <article class="feature-card">
               <h3>Card developer</h3>
               <p>Turn loose ideas into fleshed-out cards with guided prompts tailored to the card type you’re working on.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Character interview</h3>
+              <p>Explore a character’s voice, motivations, and backstory through guided interviews that stay true to your canon.</p>
             </article>
           </div>
         </div>
@@ -710,7 +763,14 @@
     <footer>
       <div class="footer-inner">
         <span>© <script>document.write(new Date().getFullYear());</script> Plotability. Built for storytellers everywhere.</span>
-        <span>Contact: <a href="mailto:hello@plotability.app">hello@plotability.app</a></span>
+        <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center;">
+          <span>Contact: <a href="mailto:support@plotability.net">support@plotability.net</a></span>
+          <span style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <a href="privacy-policy.html" style="color: inherit; text-decoration: none; transition: color 0.2s ease;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255, 255, 255, 0.65)'">Privacy Policy</a>
+            <a href="terms-of-use.html" style="color: inherit; text-decoration: none; transition: color 0.2s ease;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255, 255, 255, 0.65)'">Terms of Use</a>
+            <a href="refunds.html" style="color: inherit; text-decoration: none; transition: color 0.2s ease;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255, 255, 255, 0.65)'">Refunds</a>
+          </span>
+        </div>
       </div>
       <div class="privacy-note">Privacy by design. Works offline. Nothing leaves your browser unless you ask it to.</div>
     </footer>
@@ -900,6 +960,7 @@
       // Canvas setup for keying out black background
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
       let rendering = false;
+      let videoStarted = false;
       
       function sizeCanvas() {
         const rect = canvas.getBoundingClientRect();
@@ -925,6 +986,12 @@
               requestAnimationFrame(renderFrame);
               return;
             }
+          }
+          
+          // Only render if video has metadata
+          if (video.readyState < 1) {
+            requestAnimationFrame(renderFrame);
+            return;
           }
           
           // Draw the video to canvas
@@ -957,50 +1024,91 @@
 
       // Start video and canvas rendering
       const startVideo = () => {
+        if (videoStarted) return;
+        
         if (video.readyState >= 1) { // HAVE_METADATA or better
           video.currentTime = 0;
           sizeCanvas();
           rendering = true;
+          videoStarted = true;
+          
+          // Try to play the video
           const playPromise = video.play();
           if (playPromise !== undefined) {
             playPromise.then(() => {
+              console.log('Video playing successfully');
               requestAnimationFrame(renderFrame);
             }).catch((e) => {
               // Autoplay blocked, but canvas can still render
-              console.log('Autoplay blocked, rendering anyway');
+              console.log('Autoplay blocked:', e);
               rendering = true;
               requestAnimationFrame(renderFrame);
+              
+              // Try to play on user interaction
+              const playOnInteraction = () => {
+                video.play().then(() => {
+                  console.log('Video started on user interaction');
+                  document.removeEventListener('click', playOnInteraction);
+                  document.removeEventListener('touchstart', playOnInteraction);
+                }).catch(() => {});
+              };
+              document.addEventListener('click', playOnInteraction, { once: true });
+              document.addEventListener('touchstart', playOnInteraction, { once: true });
             });
           } else {
             requestAnimationFrame(renderFrame);
           }
+        } else {
+          console.log('Video not ready yet, readyState:', video.readyState);
         }
       };
 
-      // Ensure video is muted
+      // Ensure video is muted and has proper attributes
       video.muted = true;
       video.setAttribute('muted', '');
       video.setAttribute('playsinline', '');
+      video.setAttribute('autoplay', '');
+      video.setAttribute('preload', 'auto');
+
+      // Error handling
+      video.addEventListener('error', (e) => {
+        console.error('Video error:', e, video.error);
+      });
 
       // Multiple event listeners for better compatibility
-      video.addEventListener('loadedmetadata', startVideo);
-      video.addEventListener('canplay', startVideo);
-      video.addEventListener('loadeddata', startVideo);
-      video.addEventListener('canplaythrough', startVideo);
+      video.addEventListener('loadedmetadata', () => {
+        console.log('Video metadata loaded');
+        startVideo();
+      });
+      video.addEventListener('canplay', () => {
+        console.log('Video can play');
+        startVideo();
+      });
+      video.addEventListener('loadeddata', () => {
+        console.log('Video data loaded');
+        startVideo();
+      });
+      video.addEventListener('canplaythrough', () => {
+        console.log('Video can play through');
+        startVideo();
+      });
       
-      // Also try when video element is loaded
-      if (video.readyState >= 1) {
-        setTimeout(startVideo, 100);
-      }
+      video.addEventListener('ended', () => startReverse());
 
-      // If still not started after a delay, force start
+      // If still not started after delays, force start
       setTimeout(() => {
-        if (!rendering && video.readyState >= 1) {
+        if (!videoStarted && video.readyState >= 1) {
+          console.log('Force starting video after delay');
           startVideo();
         }
       }, 500);
 
-      video.addEventListener('ended', () => startReverse());
+      setTimeout(() => {
+        if (!videoStarted && video.readyState >= 1) {
+          console.log('Force starting video after longer delay');
+          startVideo();
+        }
+      }, 1500);
     }
 
     // Initialize when DOM is ready
@@ -1010,5 +1118,68 @@
       initVideo();
     }
   })();
-  </script>
+  // Secondary video keying for feature section
+  (function () {
+    function initFeatureVideo() {
+      const video = document.getElementById('feature-video');
+      const canvas = document.getElementById('feature-video-canvas');
+      if (!video || !canvas) { setTimeout(initFeatureVideo, 100); return; }
+
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      let rendering = false;
+
+      function sizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+        canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+      }
+      sizeCanvas();
+      window.addEventListener('resize', sizeCanvas);
+
+      // Note: keying disabled to preserve all video content (Plotability UI)
+      function render() {
+        if (!rendering) return;
+        if (canvas.width === 0 || canvas.height === 0) { sizeCanvas(); requestAnimationFrame(render); return; }
+        if (video.readyState < 1) { requestAnimationFrame(render); return; }
+        // Overscan draw to hide encoded borders but do not modify pixels
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Overscan draw to hide encoded borders but do not modify pixels
+        ctx.drawImage(video, -2, -2, canvas.width + 4, canvas.height + 4);
+        requestAnimationFrame(render);
+      }
+
+      // prepare element
+      video.muted = true; video.setAttribute('muted',''); video.setAttribute('playsinline','');
+      video.setAttribute('autoplay',''); video.setAttribute('preload','auto');
+      video.addEventListener('error', () => {});
+      ['loadedmetadata','canplay','loadeddata','canplaythrough'].forEach(ev =>
+        video.addEventListener(ev, () => {
+          if (!rendering) { sizeCanvas(); rendering = true; requestAnimationFrame(render); }
+          // attempt to play when possible
+          const p = video.play(); if (p && p.catch) { p.catch(() => {}); }
+        })
+      );
+      // fallback: try to start after a short delay
+      setTimeout(() => {
+        const p = video.play(); if (p && p.catch) { p.catch(() => {}); }
+        if (!rendering) { rendering = true; requestAnimationFrame(render); }
+      }, 200);
+      // user interaction fallback if autoplay is blocked
+      const playOnInteraction = () => {
+        const p = video.play(); if (p && p.then) { p.then(() => { document.removeEventListener('click', playOnInteraction); document.removeEventListener('touchstart', playOnInteraction); }); }
+        if (!rendering) { rendering = true; requestAnimationFrame(render); }
+      };
+      document.addEventListener('click', playOnInteraction, { once: true });
+      document.addEventListener('touchstart', playOnInteraction, { once: true });
+      if (video.readyState >= 1) { setTimeout(() => { if (!rendering) { rendering = true; requestAnimationFrame(render); } }, 100); }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initFeatureVideo);
+    } else {
+      initFeatureVideo();
+    }
+  })();
+</script>
 </html>

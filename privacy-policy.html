@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — Plotability</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0520;
+      --text-muted: rgba(232, 232, 247, 0.72);
+      --accent-1: #B774F2;
+      --accent-2: #FF5C9E;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at 18% 20%, rgba(72, 32, 172, 0.22), transparent 34%),
+                  radial-gradient(circle at 82% 16%, rgba(140, 30, 160, 0.12), transparent 40%),
+                  linear-gradient(160deg, #00000f, #03002a 48%, #0b0042 100%);
+      color: #fff;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: clamp(100px, 10vw, 140px) clamp(20px, 6vw, 40px) 80px;
+    }
+
+    .logo-container {
+      margin-bottom: 40px;
+    }
+
+    .brand-icon {
+      width: clamp(48px, 7vw, 80px);
+      height: auto;
+      display: block;
+    }
+
+    h1 {
+      font-family: 'Montserrat', 'Inter', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      margin: 0 0 20px;
+      background-image: linear-gradient(120deg, var(--accent-1), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+
+    h2 {
+      font-family: 'Montserrat', 'Inter', sans-serif;
+      font-size: 1.5rem;
+      margin: 40px 0 16px;
+      color: #fff;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin: 0 0 20px;
+    }
+
+    .last-updated {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.9rem;
+      margin-bottom: 40px;
+    }
+
+    .back-link {
+      position: fixed;
+      top: clamp(20px, 5vw, 30px);
+      right: clamp(20px, 6vw, 40px);
+      z-index: 100;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      color: var(--accent-1);
+      text-decoration: none;
+      transition: color 0.2s ease, background 0.2s ease;
+      background: rgba(18, 10, 46, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      color: var(--accent-2);
+      background: rgba(18, 10, 46, 0.95);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-container">
+      <a href="index.html">
+        <img class="brand-icon" src="assets/screenshots/plotabilityLogo.png" alt="Plotability logo">
+      </a>
+    </div>
+
+    <h1>Privacy Policy (Australia)</h1>
+    <p class="last-updated">Effective date: 15.11.25</p>
+
+    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 24px; margin-bottom: 40px;">
+      <p style="margin-bottom: 12px;"><strong>Business name:</strong> Plotability — The Jeffrey Trust (ABN 78158070309)</p>
+      <p style="margin-bottom: 0;"><strong>Contact:</strong> <a href="mailto:support@plotability.net" style="color: var(--accent-1);">support@plotability.net</a></p>
+    </div>
+
+    <p>We respect your privacy. This policy describes how we handle personal information in accordance with the <strong>Privacy Act 1988 (Cth)</strong> and the <strong>Australian Privacy Principles (APPs)</strong>. Where we handle EU/UK data, see the <strong>International transfers</strong> section.</p>
+
+    <h2>1. Personal information we collect</h2>
+    <ul style="color: var(--text-muted); line-height: 1.8; margin: 0 0 20px; padding-left: 24px;">
+      <li><strong>Account & contact:</strong> name, email, region/time zone, support communications.</li>
+      <li><strong>Billing:</strong> via Stripe—payment method details are handled by Stripe; we store limited transactional metadata (amount, status, last 4 digits, expiry month/year).</li>
+      <li><strong>App usage & device:</strong> logs (IP address, device type, OS/browser), event timestamps, error diagnostics.</li>
+      <li><strong>Content:</strong> the project data you add (cards, notes, attachments). This is typically not "personal information" unless you include personal details.</li>
+      <li><strong>API keys (BYOK):</strong> if you store an external AI key in the app, we store it encrypted locally (and/or in your chosen secure storage) and transmit only as necessary to fulfil your requests.</li>
+    </ul>
+
+    <h2>2. How we use personal information</h2>
+    <ul style="color: var(--text-muted); line-height: 1.8; margin: 0 0 20px; padding-left: 24px;">
+      <li>Provide, operate, and improve the Service.</li>
+      <li>Authenticate and secure accounts; prevent fraud/abuse.</li>
+      <li>Process payments and manage subscriptions.</li>
+      <li>Provide support and service communications.</li>
+      <li>Comply with legal obligations and respond to lawful requests.</li>
+    </ul>
+
+    <h2>3. Legal bases (APPs & consent)</h2>
+    <p>We collect personal information with your consent and where reasonably necessary for our functions/activities (APP 3). You may decline to provide certain data, but some features may not work.</p>
+
+    <h2>4. Disclosure to third parties</h2>
+    <p>We may disclose limited personal information to:</p>
+    <ul style="color: var(--text-muted); line-height: 1.8; margin: 0 0 20px; padding-left: 24px;">
+      <li><strong>Stripe</strong> (payments), <strong>cloud/hosting</strong> and analytics providers, email/support tools.</li>
+      <li>Professional advisers and insurers (confidentiality-bound).</li>
+      <li>Authorities as required by law or to protect rights, safety, or security.</li>
+    </ul>
+    <p>We do not sell personal information.</p>
+
+    <h2>5. International transfers</h2>
+    <p>Our service providers may be located outside Australia (e.g., the US, EU, or other regions). Where we disclose personal information overseas, we take reasonable steps to ensure recipients protect it in line with the APPs (APP 8). If you use BYOK with a non-AU provider, your prompts/outputs may be processed where that provider operates—review their privacy terms.</p>
+
+    <h2>6. Data security</h2>
+    <p>We use technical and organisational measures (encryption in transit, role-based access, least-privilege, audit logging) and expect our vendors to do the same. No method is 100% secure; report suspected incidents to <strong><a href="mailto:support@plotability.net" style="color: var(--accent-1);">support@plotability.net</a></strong>.</p>
+
+    <h2>7. Data retention</h2>
+    <ul style="color: var(--text-muted); line-height: 1.8; margin: 0 0 20px; padding-left: 24px;">
+      <li><strong>Account & billing:</strong> retained while your account is active and for reasonable periods for legal/accounting purposes.</li>
+      <li><strong>Content:</strong> retained while your account is active or until you delete/export it.</li>
+      <li><strong>Backups/logs:</strong> kept for limited durations for reliability and security.</li>
+    </ul>
+
+    <h2>8. Access & correction (APP 12 & 13)</h2>
+    <p>You may request access to, or correction of, personal information we hold about you: <strong><a href="mailto:support@plotability.net" style="color: var(--accent-1);">support@plotability.net</a></strong>. We'll respond within a reasonable period. If we refuse, we'll tell you why and how to complain.</p>
+
+    <h2>9. Marketing</h2>
+    <p>We may send service updates and optional marketing emails. You can unsubscribe at any time.</p>
+
+    <h2>10. Cookies & analytics</h2>
+    <p>We may use essential cookies and privacy-respecting analytics to understand aggregate usage. You can control cookies through your browser.</p>
+
+    <h2>11. Notifiable Data Breaches (NDB) scheme</h2>
+    <p>If a data breach is likely to result in serious harm, we will notify affected individuals and the Office of the Australian Information Commissioner (OAIC) in accordance with the NDB scheme.</p>
+
+    <h2>12. Children</h2>
+    <p>The Service is not directed to children under 16. Do not sign up or submit personal information for children.</p>
+
+    <h2>13. Changes to this policy</h2>
+    <p>We may update this policy; the latest version will be posted on our website with an effective date.</p>
+
+    <h2>14. Complaints</h2>
+    <p>If you have privacy concerns, contact <strong><a href="mailto:support@plotability.net" style="color: var(--accent-1);">support@plotability.net</a></strong>. If unresolved, you can contact the <strong>OAIC</strong> (https://www.oaic.gov.au) for guidance or to lodge a complaint.</p>
+  </div>
+
+  <a href="index.html" class="back-link">← Back to Home</a>
+</body>
+</html>
+
